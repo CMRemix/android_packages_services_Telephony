@@ -522,7 +522,6 @@ public class MobileNetworkSettings extends PreferenceActivity
         mButtonDataRoam = (SwitchPreference) prefSet.findPreference(BUTTON_ROAMING_KEY);
         mButtonNationalDataRoam = (SwitchPreference) prefSet.findPreference(
                 BUTTON_NATIONAL_ROAMING_KEY);
-        mButtonNationalDataRoam.setOnPreferenceChangeListener(this);
         mButtonPreferredNetworkMode = (ListPreference) prefSet.findPreference(
                 BUTTON_PREFERED_NETWORK_MODE);
         mButtonEnabledNetworks = (ListPreference) prefSet.findPreference(
@@ -567,6 +566,11 @@ public class MobileNetworkSettings extends PreferenceActivity
         // app to change this setting's backend, and re-launch this settings app
         // and the UI state would be inconsistent with actual state
         mButtonDataRoam.setChecked(mPhone.getDataRoamingEnabled());
+
+        mButtonNationalDataRoam.setChecked(android.provider.Settings.System.getInt(
+                mPhone.getContext().getContentResolver(),
+                android.provider.Settings.System.MVNO_ROAMING, 0) == 1);
+        mButtonNationalDataRoam.setOnPreferenceChangeListener(this);
 
         if (getPreferenceScreen().findPreference(BUTTON_PREFERED_NETWORK_MODE) != null
                 || getPreferenceScreen().findPreference(BUTTON_ENABLED_NETWORKS_KEY) != null)  {
@@ -814,9 +818,6 @@ public class MobileNetworkSettings extends PreferenceActivity
 
         // Get the networkMode from Settings.System and displays it
         mButtonDataRoam.setChecked(mPhone.getDataRoamingEnabled());
-        mButtonNationalDataRoam.setChecked(android.provider.Settings.System.getInt(
-                mPhone.getContext().getContentResolver(),
-                android.provider.Settings.System.MVNO_ROAMING, 0) == 1);
 
         mButtonEnabledNetworks.setValue(Integer.toString(settingsNetworkMode));
         mButtonPreferredNetworkMode.setValue(Integer.toString(settingsNetworkMode));
@@ -1026,10 +1027,8 @@ public class MobileNetworkSettings extends PreferenceActivity
             return true;
 
         } else if (preference == mButtonNationalDataRoam) {
-            boolean value = (Boolean) objValue;
             android.provider.Settings.System.putInt(mPhone.getContext().getContentResolver(),
-                    android.provider.Settings.System.MVNO_ROAMING, value ? 1 : 0);
-            return true;
+                    android.provider.Settings.System.MVNO_ROAMING, (Boolean) objValue ? 1 : 0);
         }
 
         // always let the preference setting proceed.
