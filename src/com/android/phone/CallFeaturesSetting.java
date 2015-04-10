@@ -28,7 +28,10 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.RingtoneManager;
@@ -257,6 +260,9 @@ public class CallFeaturesSetting extends PreferenceActivity
     private PreferenceScreen mButtonVideoCallForward;
     private PreferenceScreen mButtonVideoCallPictureSelect;
 
+    // Call recording format
+    private static final String CALL_RECORDING_FORMAT = "call_recording_format";
+
     private EditPhoneNumberPreference mSubMenuVoicemailSettings;
 
     private Runnable mVoicemailRingtoneLookupRunnable;
@@ -286,6 +292,7 @@ public class CallFeaturesSetting extends PreferenceActivity
     private AccountSelectionPreference mDefaultOutgoingAccount;
     private boolean isSpeedDialListStarted = false;
     private PreferenceScreen mButtonBlacklist;
+    private ListPreference mCallRecordingFormat;
 
     private class VoiceMailProvider {
         public VoiceMailProvider(String name, Intent intent) {
@@ -652,6 +659,11 @@ public class CallFeaturesSetting extends PreferenceActivity
                 mChangingVMorFwdDueToProviderChange = true;
                 saveVoiceMailAndForwardingNumber(newProviderKey, newProviderSettings);
             }
+        } else if (preference == mCallRecordingFormat) {
+            int value = Integer.valueOf((String) objValue);
+            int index = mCallRecordingFormat.findIndexOfValue((String) objValue);
+            Settings.CMREMIX.putInt(getContentResolver(), Settings.CMREMIX.CALL_RECORDING_FORMAT, value);
+            mCallRecordingFormat.setSummary(mCallRecordingFormat.getEntries()[index]);
         }
         // always let the preference setting proceed.
         return true;
