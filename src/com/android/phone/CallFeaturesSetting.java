@@ -304,7 +304,6 @@ public class CallFeaturesSetting extends PreferenceActivity
     private AccountSelectionPreference mDefaultOutgoingAccount;
     private boolean isSpeedDialListStarted = false;
     private PreferenceScreen mButtonBlacklist;
-    private ListPreference mCallRecordingFormat;
     private SwitchPreference mButtonProximity;
 
     private SwitchPreference mProxSpeaker;
@@ -2013,7 +2012,7 @@ public class CallFeaturesSetting extends PreferenceActivity
         if (mCallRecordingFormat != null) {
             if (isCallRecordingEnabled()) {
                 int format = Settings.System.getInt(getContentResolver(),
-                        Settings.System.CALL_RECORDING_FORMAT, 0);
+                        Settings.CMREMIX.CALL_RECORDING_FORMAT, 0);
                 mCallRecordingFormat.setValue(String.valueOf(format));
                 mCallRecordingFormat.setSummary(mCallRecordingFormat.getEntry());
                 mCallRecordingFormat.setOnPreferenceChangeListener(this);
